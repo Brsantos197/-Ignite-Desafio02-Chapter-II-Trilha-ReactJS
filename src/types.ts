@@ -9,6 +9,6 @@ export interface FoodType {
 
 export interface FoodProps {
   food: FoodType;
-  handleEditFood: (arg0: FoodType) => {};
-  handleDelete: () => {};
+  handleEditFood: (arg0: FoodType) => void;
+  handleDelete: (arg0: number) => void;
 }
