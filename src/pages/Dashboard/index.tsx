@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Header from '../../components/Header';
 import api from '../../services/api';
@@ -9,15 +9,15 @@ import { FoodsContainer } from './styles';
 
 import { FoodType } from '../../types'
 
-function Dashboard() {
+function Dashboard(): JSX.Element {
   const [foods, setFoods] = useState<FoodType[]>([]);
-  const [editingFood, setEditingFood] = useState({} as FoodType);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingFood, setEditingFood] = useState<FoodType>();
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchData() {
-      const response = await api.get('/foods');
+      const response = await api.get<FoodType[]>('/foods');
       setFoods(response.data)
     }
     fetchData()
@@ -25,10 +25,14 @@ function Dashboard() {
 
   async function handleAddFood(food: FoodType) {
     try {
-      const response = await api.post('/foods', {
+      const response = await api.post<FoodType>('/foods', {
         ...food,
         available: true
       })
+
+      if (!response.data) {
+        return
+      }
 
       setFoods([...foods, response.data])
     } catch (error) {
@@ -38,7 +42,12 @@ function Dashboard() {
 
   async function handleUpdateFood(food: FoodType) {
     try {
-      const foodUpdated = await api.put(
+
+      if (!editingFood) {
+        return
+      }
+
+      const foodUpdated = await api.put<FoodType>(
         `/foods/${editingFood.id}`,
         { ...editingFood, ...food },
       )
@@ -61,15 +70,19 @@ function Dashboard() {
     setFoods(foodsFiltered)
   }
 
-  function toggleModal() {
+  function toggleModal(): void {
     setModalOpen(!modalOpen)
+    console.log(modalOpen);
   }
 
   function toggleEditModal() {
-    setModalOpen(!editModalOpen)
+    setEditModalOpen(!editModalOpen)
   }
 
   function handleEditFood(food: FoodType) {
+    if (!food) {
+      return
+    }
     setEditingFood(food)
     setEditModalOpen(true)
   }
@@ -85,7 +98,7 @@ function Dashboard() {
       <ModalEditFood
         isOpen={editModalOpen}
         setIsOpen={toggleEditModal}
-        editingFood={editingFood}
+        editingFood={editingFood as FoodType}
         handleUpdateFood={handleUpdateFood}
       />
 

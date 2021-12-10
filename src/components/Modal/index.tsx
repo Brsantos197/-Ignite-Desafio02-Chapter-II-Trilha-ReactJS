@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactModal from 'react-modal';
 
 // import { Container } from './styles';
 
-function Modal(props) {
+import { ModalProps } from "../../types";
+
+function Modal(props: ModalProps) {
   const { isOpen, setIsOpen, children } = props;
 
-  const [modalStatus, setModalStatus] = useState(isOpen)
+  const [modalStatus, setModalStatus] = useState<boolean>(isOpen)
   useEffect(() => {
     if (modalStatus !== isOpen) {
       console.log(props)
